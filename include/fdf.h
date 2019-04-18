@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gboutin <gboutin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/14 16:25:04 by gboutin           #+#    #+#             */
-/*   Updated: 2019/03/18 16:25:47 by gboutin          ###   ########.fr       */
+/*   Created: 2019/03/18 18:22:03 by gboutin           #+#    #+#             */
+/*   Updated: 2019/04/17 12:49:11 by gboutin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,113 +14,171 @@
 # define FDF_H
 # include <mlx.h>
 # include <math.h>
-# include "../../libft_perso/src/libft.h"//a modifier avec le bon path
-# include <stdio.h>//a supprimer
-
-# define MLXPTR			d->env.mlx_ptr
-# define WINPTR 		d->env.win_ptr
-# define IMGPTR 		d->env.img_ptr
-# define IMGDATA		d->env.img_data
-
-# define WIDTH			2400//max = 2560
-# define HEIGHT			1300//max = 1395
-# define SPACEX			(WIDTH / (d->max.x * 3))
-# define SPACEY			SPACEX / 2
-# define RED			0xe22b29
-# define YELLOW			0xfbf22f
-# define BLUE			0x56c5ea
-# define GREEN			0x22ff00
-# define CYAN			0x00FFFF
-# define WHITE			0xFFFFFF
+# include "../libft/srcs/libft.h"
 
 /*
-** middle = max_size/2 - size/2 * nb_pixel_echelle
+** ----------------BOOLEEN---------------- **
 */
+# define TRUE		1
+# define FALSE		0
 
+/*
+** ---------------SCREEN SIZE------------- **
+*/
+# define WIDTH		data->size_window.x
+# define HEIGHT		data->size_window.y
+# define MIDWIDTH	(WIDTH / 2)
+# define MIDHEIGHT	(HEIGHT / 2)
+# define MAX_WIDTH	2560
+# define MAX_HEIGHT 1390
+# define MIN_WIDTH	800
+# define MIN_HEIGHT	800
+
+/*
+** ---------SPACE BETWEEN TWO POINTS------- **
+*/
+# define SPACE		(WIDTH / (data->tabsize.x * 1.42))
+# define ORIGINY	(MIDHEIGHT - ((data->tabsize.y / 2) * SPACE))
+# define ORIGINX	(MIDWIDTH - ((data->tabsize.x / 2) * SPACE))
+
+# define DATA		data->array[c->i][c->j]
+
+/*
+** ---------------MLX POINTER------------- **
+*/
+# define MLXPTR		data->env.mlx_ptr
+# define WINPTR		data->env.win_ptr
+# define IMGPTR		data->env.img_ptr
+# define IMGDATA	data->env.img_data
+
+/*
+** -----------------COLOR----------------- **
+*/
+# define YELLOW		0xe0fb07
+# define GREEN		0x42f626
+# define CYAN		0x26e7f6
+# define WHITE		0xffffff
+
+/*
+** ------------COUNTER STRUCTURE---------- **
+*/
+typedef struct	s_cmpt
+{
+	int			i;
+	int			j;
+}				t_cmpt;
+
+/*
+** ---STRUCTURE CONTAINING MLX POINTERS--- **
+*/
 typedef struct	s_env
 {
 	void		*mlx_ptr;
 	void		*win_ptr;
 	void		*img_ptr;
-	int			*img_data;
-
+	char		*img_data;
 }				t_env;
 
-typedef struct	s_abs_ord
+/*
+** ---STRUCTURE CONTAINING AXES X AND Y--- **
+*/
+typedef struct	s_coor
 {
 	int			x;
 	int			y;
-}				t_abs_ord;
+	int			z;
+	int			color;
+}				t_coor;
 
+/*
+** --------STRUCTURE FOR BRESENHAM-------- **
+*/
+typedef struct	s_bresenham
+{
+	int			erreur;
+	int			dx;
+	int			dy;
+	int			xincr;
+	int			yincr;
+	t_coor		pos;
+}				t_bresenham;
+
+/*
+** -------------MAIN STRUCTURE------------ **
+*/
 typedef struct	s_data
 {
-	int			x1;
-	int			x2;
-	int			y1;
-	int			y2;
-	float		dx;
-	float		dy;
-	float		e;
+	int			fd;
+	int			iso;
+	int			parallel;
+	double		zoom;
+	int			z;
+	int			bpp;
+	int			size_ln;
+	int			end;
+	char		*str;
+	char		*line;
+	char		**tmp;
+	t_coor		**array;
+	t_coor		tabsize;
+	t_coor		size_window;
+	t_env		env;
 }				t_data;
 
-typedef	struct	s_3d
-{
-	char		*line;
-	char		*str;
-	char		*pxl;
-	char		**tmp;
-	int			**array;
-	int			fd;
-	int			i;
-	int			j;
-	int			bpp;
-	int			size_line;
-	int			endian;
-	t_abs_ord	max;
-	t_abs_ord	s;
-	t_data		tata;
-	t_env		env;
-}				t_3d;
+/*
+** ---------------------PARSING MAP---------------------
+*/
+int				axe_x(char *str);
+int				parse_map(t_data *data, char *file_desc);
+void			axe_y(t_data *data);
 
 /*
-** -----------------------DRAWING----------------------
+** -------------------INIT MLX & WINDOW-----------------
 */
-int				draw_img(t_3d *d);
+int				smlx_init(t_data *data, char *title);
+void			init_size_screen(t_data *data);
+void			init_commands(t_data *data);
 
 /*
-** ----------------------INIT WINDOW-------------------
+** ----------------------JUST FREE----------------------
 */
-void			ft_help_command(t_3d *d);
-int				smlx_init(t_3d *d, char *title);
+void			free_array(char **str);
 
 /*
-** ---------------------KEYBOARDING--------------------
+** ----------------------KEYBOARDING--------------------
 */
-int				deal_key(int key, t_3d *d);
-int				deal_mouse(t_3d *d);
+int				deal_key(int key, t_data *data);
+int				deal_mouse(t_data *data);
+void			help_command(t_data *data);
+void			ft_close(t_data *data);
 
 /*
-** -----------------------PARSING----------------------
+** ----------------------MOVING VIEW--------------------
 */
-int				parse_color(char *str, int *i);
-int				parse_digit(char *s, int *i);
-int				parse_map(char *str);
-int				read_map(t_3d *d, char *s);
-int				init_variable(t_3d *d, char *str);
+void			ft_translate_up(t_data *data);
+void			ft_translate_left(t_data *data);
+void			ft_translate_down(t_data *data);
+void			ft_translate_right(t_data *data);
+void			ft_zoom_on(t_data *data);
+void			ft_zoom_off(t_data *data);
+void			ft_iso(t_data *data);
+void			ft_parallel(t_data *data);
 
 /*
-** --------------------ALGO BRESENHAM------------------
+** ----------------------CHANGE COOR--------------------
 */
-void			ft_bresenham(t_3d *d, t_abs_ord a, t_abs_ord b, int color);
-void			ft_vertical(t_abs_ord a, t_abs_ord b, t_3d *d, int color);
-void			ft_horizontal(t_abs_ord a, t_abs_ord b, t_3d *d, int color);
-int				ft_abs(int i);
-void			ft_pixel_put(t_3d *d, t_abs_ord pos, int color);
+void			store_prev_pos(t_data *data);
+void			store_prev_pos2(t_data *data);
+void			iso(int *x, int *y, t_data *data, t_cmpt *c);
+void			ft_decrease_z(t_data *data);
+void			ft_increase_z(t_data *data);
 
 /*
-** ---------------------CREATE GRID--------------------
+** ----------------------DRAW PICTURE-------------------
 */
-void			draw_line(t_3d *d, t_abs_ord start, t_abs_ord coor, char dir);
-void			create_grid(t_3d *d);
+void			ft_put_pixel(t_data *data, t_bresenham *cur, int color);
+void			ft_draw_line(t_coor *cur, t_coor *prev, int color, t_data *d);
+void			ft_draw_line2(t_bresenham *cur, t_data *data, int color);
+void			ft_draw_line3(t_bresenham *cur, t_data *data, int color);
 
 #endif
