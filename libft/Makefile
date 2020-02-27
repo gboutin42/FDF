@@ -6,13 +6,14 @@
 #    By: gboutin <gboutin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 18:07:23 by gboutin           #+#    #+#              #
-#    Updated: 2019/04/17 13:13:14 by gboutin          ###   ########.fr        #
+#    Updated: 2020/02/27 14:27:29 by gboutin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .SILENT:
 CC = gcc
 NAME = libft.a
+STR = $<
 CFLAGS = -Wextra -Werror -Wall
 OBJDIR = obj/
 SRCDIR = srcs/
@@ -106,22 +107,22 @@ OBJFILES = $(addprefix $(OBJDIR),$(OBJ))
 all: $(NAME)
 
 $(OBJDIR)%.o: $(SRCDIR)%.c
-	@mkdir -p obj/
+	mkdir -p obj/
 	$(CC) $(CFLAGS) -o $@ -c $^
-	echo "$(CYAN)Compiling:\t\t$(GREEN)$<$(NO_COLOR)"
+	printf "$(CYAN)Compiling:$(GREEN)%28s  $(RED)DONE$(NO_COLOR)\r" $(STR)
 
 $(NAME): $(OBJFILES)
-		ar rc $(NAME) $(OBJFILES)
-		ranlib $(NAME)
-		echo "$(CYAN)Library:\t\t$(GREEN)[Done]$(NO_COLOR)"
+	ar rc $(NAME) $(OBJFILES)
+	ranlib $(NAME)
+	printf "\n$(CYAN)Library:\t\t\t\t$(GREEN)[Done]$(NO_COLOR)\n"
 
 clean:
 	$(RM) $(OBJFILES)
-	echo "$(RED)Deleted:\t\tall object files$(NO_COLOR)"
+	printf "$(RED)Deleted:\t\t\t\tall object files$(NO_COLOR)\n"
 
 fclean: clean
 	$(RM) $(NAME)
-	echo "$(RED)Deleted:\t\t$(NAME)$(NO_COLOR)"
+	printf "$(RED)Deleted:\t\t\t\t$(NAME)$(NO_COLOR)\n"
 
 re: fclean all
 .PHONY: all clean fclean

@@ -6,7 +6,7 @@
 #    By: gboutin <gboutin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/03/19 13:39:03 by gboutin           #+#    #+#              #
-#    Updated: 2019/04/17 13:13:10 by gboutin          ###   ########.fr        #
+#    Updated: 2020/02/27 14:27:34 by gboutin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,12 +47,12 @@ all: $(NAME)
 $(OBJDIR)%.o: $(SRCDIR)%.c $(HDRDIR)$(NAME).h
 	mkdir -p obj/
 	$(CC) $(CFLAGS) -o $@ -c $< -I $(HDRDIR)
-	echo "$(CYAN)Compiling:\t\t$(GREEN)$<$(NO_COLOR)"
+	@printf "$(CYAN)Compiling:$(GREEN)%28s  $(RED)DONE$(NO_COLOR)\r" $(STR)
 
 $(NAME): $(OBJFILES)
 	$(LIBFT)
 	$(CC) -o $@ $(CFLAGS) $(MLX) $^ $(LIBFTFILES)
-	echo "$(CYAN)Executable:\t\t$(GREEN)[Done]$(NO_COLOR)"
+	printf "$(CYAN)Executable:\t\t\t\t$(GREEN)[Done]$(NO_COLOR)\n"
 
 clean:
 	$(RM) $(OBJFILES)
@@ -60,7 +60,7 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME)
-	echo "$(RED)Deleted:\t\t$(NAME)$(NO_COLOR)"
+	printf "$(RED)Deleted:\t\t\t\t$(NAME)$(NO_COLOR)\n"
 
 re: fclean all
 
